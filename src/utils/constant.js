@@ -1,5 +1,5 @@
 export const CALLBACK_NAME = 'gmapsCallback';
-export const API_KEY = 'AIzaSyDuyIUt7cwoMgdZYJOkryDCBWhekpdCcI4';
+export const API_KEY = '';
 export const ONE_CITY = {lat: -28.024, lng: 140.887}
 export const LOCATIONS = [
     {lat: -31.563910, lng: 147.154312},
