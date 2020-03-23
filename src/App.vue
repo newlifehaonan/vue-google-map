@@ -1,21 +1,18 @@
 <template>
   <div id="app">
-    <simpleMap/>
-    <HelloWorld/>
+    <router-link to="/earthquake">To earthquake Map</router-link>
+    <router-link to="/census">To Census Map</router-link>
+    <router-view/>
   </div>
 </template>
 
 <script>
 import store from './store/store'
-import HelloWorld from './components/HelloWorld'
-import simpleMap from './components/simpleMap'
+import router from './routes'
 export default {
   name: 'App',
   store,
-  components: {
-    HelloWorld,
-    simpleMap
-  }
+  router
 }
 </script>
 <style lang="scss">
