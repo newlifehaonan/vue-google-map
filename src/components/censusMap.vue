@@ -1,15 +1,14 @@
 <template>
     <div>
-        <p>Hello!</p>
-        <p>{{mapData.type}}</p>
+        <p>Hello Census Map</p>
+        <div class="map-body" ref="map-census"></div>
     </div>
 </template>
 <script>
 export default {
-    props: {
-        mapData: {
-            type: Object,
-            default: () => {}
+    data() {
+        return {
+            map: window.google.maps
         }
     }
 }

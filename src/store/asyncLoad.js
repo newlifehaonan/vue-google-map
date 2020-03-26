@@ -1,4 +1,4 @@
-import { CALLBACK_NAME, API_KEY } from '../utils/constant'
+import { API_KEY } from '../environment/key'
 const asyncLoad = {
     namespaced: true,
     state: {
@@ -35,13 +35,13 @@ const asyncLoad = {
     actions: {
         loadMap({commit, getters}) {
             commit('setPromise')
-            if (getters.getMapState) return getters.getInitePromise
+            if (getters.getMapState) return Promise.resolve('Success')
             commit('setMapState')
-            window[CALLBACK_NAME] = () => getters.getResolvedPromise(window.google);
+            window['gmapsCallback'] = () => getters.getResolvedPromise(window.google);
             const script = document.createElement('script');
             script.async = true;
             script.defer = true;
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=${CALLBACK_NAME}`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=gmapsCallback`;
             script.onerror = getters.getRejectPromise;
             document.querySelector('head').appendChild(script);
             return getters.getInitePromise

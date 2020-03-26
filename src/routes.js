@@ -4,23 +4,42 @@ import earthquakeMap from './components/earthquakeMap'
 import censusMap from './components/censusMap'
 import store from './store/store'
 Vue.use(VueRouter)
-const fetchLogoData = async () => ({
-    mapData: await store.dispatch('mapData/fetchGoogleLogo')
-})
-const fetchEarthquakeData = async () => ({
-    mapData: await store.dispatch('mapData/fetchEarthQuakeData')
-})
 const routes = [
+    {
+        path: '/', 
+        component: earthquakeMap
+    },
     {
         path: '/earthquake', 
         component: earthquakeMap,
-        props: fetchEarthquakeData
-
+        beforeEnter: async (to, from,next) => {
+            try {
+                if(store.getters['mapData/getEarthQuakeData']) {
+                    next()
+                } else {
+                    await store.dispatch('mapData/fetchEarthQuakeData')
+                    next()
+                }
+            } catch(error) {
+                console.error(error)
+            }
+        }
     },
     {
         path: '/census', 
         component: censusMap,
-        props: fetchLogoData
+        beforeEnter: async (to, from,next) => {
+            try {
+                if(store.getters['mapData/getGoogleLogoData']) {
+                    next()
+                } else {
+                    await store.dispatch('mapData/fetchGoogleLogo')
+                    next()
+                }
+            } catch(error) {
+                console.error(error)
+            }
+        }
     }
 ]
 
@@ -28,24 +47,15 @@ const router = new VueRouter({
     routes
 })
 
-router.beforeEach((to, from, next) => {
-    to.matched.forEach((match) => {
-        Object.keys(match.props).forEach(propKey => {
-            let props = match.props[propKey];
-            if (typeof props === "boolean") {
-                next();
-            } else {
-                if (!match._cache_props) {
-                    match._cache_props = props;
-                }
-
-                match._cache_props(to).then((data) => {
-                    match.props[propKey] = () => data;
-                    next();
-                });
-            }
-        });
-
-    });
-});
+router.beforeEach(async (to, from, next) => {
+    console.log('call global beforeEach')
+    try {
+        const loaded =  await store.dispatch('asyncLoad/loadMap')
+        if (loaded) {
+            next()
+        }
+    } catch(error) {
+        console.error(error)
+    }
+})
 export default router

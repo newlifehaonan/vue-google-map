@@ -1,28 +1,30 @@
-import { ONE_CITY } from '../utils/constant'
 import googleApi from '../apis/googleApi'
 const mapData = {
     namespaced: true,
     state: {
-        oneCity: ONE_CITY,
         googleLogoData: null,
+        earthQuakeData: null,
     },
     mutations: {
         setGoogleLogoData(state, payload) {
             state.googleLogoData = payload
+        },
+        setEarthQuakeData(state, payload) {
+            state.earthQuakeData = payload
         }
     },
     getters: {
-        getOneCity(state) {
-            return state.oneCity
-        },
         getGoogleLogoData(state) {
             return state.googleLogoData
+        },
+        getEarthQuakeData(state) {
+            return state.earthQuakeData
         }
     },
     actions: {
         async fetchGoogleLogo({commit}) {
             try {
-                console.log('i am dispatched')
+                console.log('fetchGoogleLogo dispatched')
                 const response = await googleApi.get('google.json')
                 commit('setGoogleLogoData', response.data)
                 return response.data
@@ -30,13 +32,15 @@ const mapData = {
                 return error
             }
         },
-        async fetchEarthQuakeData() {
+        async fetchEarthQuakeData({commit}) {
             try {
-                console.log('i am dispatched')
+                console.log('fetchEarthQuakeData dispatched')
                 const response = await googleApi.get('quakes.geo.json')
                 const callback = response.data
                 window.eqfeed_callback = (result) => result
-                return eval(callback)
+                const data = eval(callback)
+                commit('setEarthQuakeData', data)
+                return data
             } catch(error) {
                 return error
             }
